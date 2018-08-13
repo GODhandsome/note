@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    img {
+      width: 100px;
+      height: 100px;
+    }
+
+    #can {
+      border: 1px solid #000;
+    }
+  </style>
+</head>
+
+<body>
+  <div>
+    <canvas id="can">
+    </canvas>
+    <button id="dowload1">DOM下载</button>
+    <button id="dowload2">纯JS下载</button>
+  </div>
+</body>
+<script>
+  create()
+  document.getElementById('dowload1').onclick = handleClickDowloadDOMImg
+  document.getElementById('dowload2').onclick = handleClickDowloadImg
+
+  function create() {
+    const content = document.getElementById('can');
+    content.width = 600;
+    content.height = 300;
+    const context = content.getContext('2d');
+    // 创建一个Img 等同 document.createElement('img')
+    const bg = new Image();
+    bg.src = '123.jpg';
+    // onload避免加载速度不同造成不同的层级关系
+    bg.onload = function () {
+      const qr = new Image();
+      qr.src = 'mpQR@2x.png';
+      context.drawImage(bg, 0, 0, content.width, content.height);
+      qr.onload = function () {
+        context.drawImage(qr, (content.width - 100) / 2, (content.height - 100) / 2, 100, 100);
+      }
+    }
+  }
+
+  function base64Img2Blob(code) {
+    var parts = code.split(';base64,');
+    var contentType = parts[0].split(':')[1];
+    // 解码base64
+    var raw = window.atob(parts[1]);
+    var rawLength = raw.length;
+    // 生成一个相同长度的 8 位无符号整数值的类型化数组
+    var uInt8Array = new Uint8Array(rawLength);
+    for (var i = 0; i < rawLength; ++i) {
+      uInt8Array[i] = raw.charCodeAt(i);
+    }
+    // 生成blob原始数据的类文件对象
+    return new Blob([uInt8Array], { type: contentType });
+  }
+
+  function downloadFile(fileName, content) {
+    var aLink = document.createElement('a');
+    var blob = base64Img2Blob(content); //new Blob([content]);
+    aLink.download = fileName;
+    // 创建一个url
+    aLink.href = URL.createObjectURL(blob);
+    aLink.click();
+  }
+
+  function handleClickDowloadDOMImg() {
+    const content = document.getElementById('can');
+    content.toBlob(function (blob) {
+      var aLink = document.createElement('a');
+      aLink.download = 'DOM.png';
+      aLink.href = URL.createObjectURL(blob);
+      aLink.click()
+    });
+  }
+
+  function handleClickDowloadImg() {
+    const content = document.createElement('canvas');
+    content.width = 600;
+    content.height = 300;
+    const context = content.getContext('2d');
+    const bg = new Image();
+    bg.src = '123.jpg';
+    bg.onload = function () {
+      const qr = new Image();
+      qr.src = 'mpQR@2x.png';
+      qr.crossOrigin = "Anonymous";
+      context.drawImage(bg, 0, 0, content.width, content.height);
+      qr.onload = function () {
+        context.drawImage(qr, (content.width - 100) / 2, (content.height - 100) / 2, 200, 200);
+        // toDataURL接受两个参数  第一个图片类型 第二个图片质量0-1
+        downloadFile('JS.png', content.toDataURL("image/png"));
+
+
+        // canvas提供的转blob方法
+        // content.toBlob(function (blob) {
+        //   var aLink = document.createElement('a');
+        //   aLink.download = '111.png';
+        //   aLink.href = URL.createObjectURL(blob);
+        //   aLink.click()
+        // });
+      }
+    }
+  }
+
+</script>
+
+</html>
