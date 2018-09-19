@@ -1,16 +1,24 @@
 ## 需求背景
 将两张图片合成并提供用户下载       
-演示需要开启本地服务，推荐http-server快速开启
 
 ## 兼容问题
-因为canvas是h5新增元素，所以首先ie10以下就不考虑了。67的谷歌以下方法是都可以实现的。
+因为canvas是h5新增元素，所以首先ie10以下就不考虑了。实测67的谷歌以下方法是都可以实现的。
+
+## canvas介绍
+Canvas API（画布）是在HTML5中新增的标签用于在网页实时生成图像，并且可以操作图像内容，基本上它是一个可以用JavaScript操作的位图。<canvas> 元素给网页中的视觉展示带来了革命性的变化， 能够实现各种让人惊叹的视觉效果和高效的动画甚至游戏。
+
+## canvas特点
+![20170120104336764](/uploads/5385869f970cde7dd6a569b0a112dab1/20170120104336764.png)
+
+## 注意点
+1.  canvas使用css设置宽高会认为是在默认宽高300:150上进行缩放，图像会变形。
+2.  canvas有层级关系，图像引入记得处理异步问题，避免层级混乱。
+3.  不通过 CORS 就在画布中使用的图片，会污染画布。一旦画布被污染，你就无法读取其数据。不能再使用画布的 toBlob(), toDataURL() 或 getImageData() 方法，调用它们会抛出安全错误。所以需要给图片配置`crossorigin`属性为`anonymous`并且需要给跨域图片合适的 CORS 响应头(参考文档[CORS图片](https://developer.mozilla.org/zh-CN/docs/Web/HTML/CORS_enabled_image))。
+
+## 推荐书籍
+[HTML5 Canvas核心技术](https://book.douban.com/subject/24533314/)(江波)
 
 ## 实现方式
-桌面已有一个id为can的canvas元素，可以在该canvas上合成图片，在canvas上右键是有图片另存为选项的，onload是为了避免图片加载速度的不同造成的层级影响。canvas的宽高不要使用css设置，因为canvas默认是300：150，在css设置会认为是在该大小上进行放大或缩小，比例不同图像还会变形。    
-
-
-canvas自带toDataURL方法，可以把canvas转成base64编码，页可以用demo中base2blob将canvas转成一个blob二进制对象，方便进行上传与下载 。但其实canvas自带一个toBlob方法可以直接将canvas转成blob对象。canvas不通过CORS使用图片会污染画布，这个时候调用 toBlob(), toDataURL()会抛出安全错误，需要给图片对象添加`crossOrigin = "Anonymous"`属性。并且这里需要有一个可以对图片响应正确 Access-Control-Allow-Origin 响应头的服务器[CORS图片](https://developer.mozilla.org/zh-CN/docs/Web/HTML/CORS_enabled_image)。        
-             
-
-
-点击下载的时候我们就可以新建a标签并利用h5新增的dowload属性,将blob对象生成一个url对象就可以进行下载了。我们下载的时候可能会有不展示图片直接就能点击进行下载的情况，可以直接`document.createElement('canvas')`生成一个canvas进行操作                     
+1.  通过canvas提供的getContext，drawImage方法以及图片onload控制层级关系完成绘图。
+2.  使用 toBlob()或toDataURL()取得相应数据对象进行后续上传下载操作。
+3.  使用a标签h5新增dowload属性以及URL.createObjectURL(blob)生成下载链接并手动触发a标签click事件进行下载
