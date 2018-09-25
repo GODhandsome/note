@@ -67,6 +67,7 @@ function selectSort(sortarr) {
   let miniIndex, temp
   for (let i = 0; i < arr.length - 1; i++) {
     miniIndex = i
+    // 找出未排序数组中最小值索引
     for (let j = 0; j < arr.length - i - 1; j++) {
       if (arr[j] < arr[miniIndex]) {
         miniIndex = j
