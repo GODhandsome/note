@@ -1,0 +1,25 @@
+{
+    "sublimeTextKeymap.promptV3Features": true,
+    "editor.multiCursorModifier": "ctrlCmd",
+    "editor.snippetSuggestions": "top",
+    "editor.formatOnPaste": true,
+    "editor.tabSize": 2,
+    "[javascript]": {},
+    "javascript.implicitProjectConfig.experimentalDecorators": true,
+    "window.zoomLevel": 0,
+    "beautify.tabSize": 2,
+    "workbench.colorTheme": "Monokai",
+    "files.associations": {
+        "*.wpy": "vue"
+    },
+    "explorer.confirmDragAndDrop": false,
+    "files.trimTrailingWhitespace": true,
+    "sync.gist": "40c50d9b85c573393a0a041df1410abe",
+    "sync.quietSync": false,
+    "sync.removeExtensions": true,
+    "sync.syncExtensions": true,
+    "sync.autoDownload": false,
+    "sync.autoUpload": false,
+    "sync.forceDownload": false,
+    "emmet.triggerExpansionOnTab": true
+}
