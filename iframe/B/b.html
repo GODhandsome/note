@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <button onclick="handleClick()">123213</button>
+  <button onclick="use()">3333</button>
+  <script>
+    function use() {
+      console.log(method)
+    }
+
+    function handleClick(){
+      if(typeof(exec_obj)=='undefined'){
+        exec_obj = document.createElement('iframe');
+        exec_obj.name = 'tmp_frame';
+        exec_obj.src = 'http://127.0.0.1:8081/c.html';
+        exec_obj.style.display = 'none';
+        document.body.appendChild(exec_obj);
+      }else{
+        exec_obj.src = 'http://127.0.0.1:8081/c.html?' + Math.random();
+      }
+    }
+
+    function addScript(){
+      if(typeof(exec_obj)=='undefined'){
+      exec_obj = document.createElement('script');
+      exec_obj.name = 'tmp_frame';
+      exec_obj.src = 'http://127.0.0.1:8081/d.js';
+      exec_obj.style.display = 'none';
+      document.body.appendChild(exec_obj);
+      }else{
+      exec_obj.src = 'http://127.0.0.1:8081/d.js?' + Math.random();
+      }
+    }
+
+  </script>
+</body>
+</html>
