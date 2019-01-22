@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+
+</body>
+<script>
+  // 工厂模式
+  // 创建的时候不使用new
+  // 缺点:对象无法辨识，所有实例都指向一个原型
+  function Factory(name) {
+    var o = new Object()
+    o.name = name
+    o.getName = function () {
+      console.log(this.name)
+    }
+    return o
+  }
+
+// 构造函数
+// 优点：实例可以识别为一个特定的类型
+// 缺点：每次创建实例时。所有方法都会被创建一次
+  function Structure(name) {
+    this.name = name
+    this.getName = function () {
+      console.log(this.name)
+    }
+  }
+
+// 构造函数优化
+// 优点：解决了方法每次都创建的问题
+// 缺点；封装。。。
+  function BetterStructure(name) {
+    this.name = name
+    this.getName = getName
+  }
+
+  function getName() {
+    console.log(this.name)
+  }
+
+// 原型模式
+// 优点：方法不会被重新创建
+// 缺点：所有属性和方法都共享，不能初始化参数
+  function Proto() {}
+  Proto.prototype.name = 'wade'
+  Proto.prototype.getName = function () {
+    console.log(this.name)
+  }
+
+  // 原型模式优化
+  // 优点： ....
+  // 缺点：重写prototype，没了constructor，而且原型模式有的缺点还是有
+  function BetterProto() {}
+  BetterProto.prototype = {
+    name: 'wade',
+    getName: function () {
+      console.log(this.name)
+    }
+  }
+
+  //原型模式在优化
+  // 优点：封装性好了点
+  // 缺点：该有的还是有
+  function BetterProto2() {}
+  BetterProto2.prototype = {
+    constructor: BetterProto2,
+    name: 'wade',
+    getName: function () {
+      console.log(this.name)
+    }
+  }
+
+  // 组合模式
+  // 优点：该共享的共享，该私有私有，使用最多的
+  // 缺点：无法满足强迫症患者更好的封装性
+  function Combination(name) {
+    this.name = name
+  }
+  Combination.prototype = {
+    constructor: Combination,
+    getName: function () {
+      console.log(this.name)
+    }
+  }
+
+  // 动态原型模式
+  // 不能用对象字面量重写原型。回顾的时候不懂去看大神文档
+  // 非要用对象字面量的方式重写原型。在判断逻辑中，修改了原型，返回一个实例
+  function ActivityProto(name) {
+    this.name = name
+    if (typeof this.getName !== 'function') {
+      ActivityProto.prototype.getName = function () {
+        console.log(this.name)
+      }
+    }
+  }
+
+  // 寄生构造函数
+  // 个人感觉跟工厂模式没啥区别,只是在创建的时候多使用个new
+  // instanceof都无法指向构造函数
+  // 这个构造函数返回的是对象。在new里面，返回的就是一个Object
+  function Parasitic(name) {
+    var o = new Object()
+    o.name = name
+    o.getName = function () {
+      console.log(this.name)
+    }
+    return o
+  }
+
+  // 稳妥构造模式
+  // 没有公告属性，方法也不引用this的对象
+  // 与寄生模式的不同：1.新创建的实例方法不引用this 2.不使用new操作符调用构造函数
+  function SafeConstructor(name) {
+    var o = new Object()
+    o.getName = function () {
+      console.log(name)
+    }
+    return o
+  }
+
+
+  var person1 = new BetterStructure('aaa')
+  var person2 = new BetterStructure('bbb')
+  console.log(person1)
+  console.log(person2)
+
+</script>
+</html>

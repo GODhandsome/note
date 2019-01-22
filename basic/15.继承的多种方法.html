@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+
+</body>
+<script>
+  // 原型链继承
+  // 问题：
+  // 1.引用类型的属性被所有实例共享
+  // 2.创建Child实例时，无法向Parent传参
+  function one() {
+    function Parent() {
+      this.name = 'wade'
+    }
+    Parent.prototype.getName = function () {
+      console.log(this.name)
+    }
+
+    function Child() {
+
+    }
+    Child.prototype = new Parent()
+    var child1 = new Child()
+  }
+
+
+  // 借用构造函数(经典继承)
+  // 优点：
+  // 1.避免了引用类型的属性被所有实例共享
+  // 2.可以在Child中向Parent传参
+  // 缺点：方法都在构造函数中定义，每次创建实例都会创建一遍方法
+  function two() {
+    function Parent() {
+      this.names = ['wade', 'jamas']
+    }
+
+    function Child() {
+      Parent.call(this)
+    }
+    var child1 = new Child()
+    child1.names.push('yayu')
+    console.log(child1.names)
+    var child2 = new Child()
+    console.log(child2.names)
+  }
+
+// 组合继承
+// 优点：融合原型链继承和构造函数的优点，是js中最常用的继承模式
+  function three() {
+    function Parent(name) {
+      this.name = name
+      this.colors = ['red', 'green']
+    }
+    Parent.prototype.getName = function () {
+      console.log(this.name)
+    }
+    function Child(name, age) {
+      this.age = age
+      Parent.call(this, name)
+    }
+    Child.prototype = new Parent()
+    Child.prototype.constructor = Child
+    var child1 = new Child('kevin', 18)
+    child1.colors.push('yellow')
+    console.log(child1.name)
+    console.log(child1.age)
+    console.log(child1.colors)
+
+    var child2 = new Child('wade', 11)
+    console.log(child2.name)
+    console.log(child2.age)
+    console.log(child2.colors)
+  }
+
+  // 原型式继承
+  // 就是ES5 Object.create的模式实现，将传入的对象作为创建的对象的原型
+  // 缺点：包含引用类型的属性值始终都会共享响应的值，这点跟原型链继承一样
+  function four() {
+    function createObj(o) {
+      function F() {}
+      F.prototype = o
+      return new F()
+    }
+  }
+
+  // 寄生式继承
+  // 创建一个仅用于封装继承过程的函数，该函数在内部以某种形式来做增强对象。最后返回对象
+  // 缺点：跟构造函数模式一样，每次创建对象都会创建一次方法
+  function five() {
+    function createObj(o) {
+      var clone = Object.create(o)
+      clone.sayName = function () {
+        console.log('wade')
+      }
+      return clone
+    }
+  }
+
+  // 寄生组合式继承
+  // 缺点；组合继承都会调用两次父构造函数，而且CHild实例和原型中都会有colors的属性
+  function six() {
+    function Parent(name) {
+      this.name = name
+      this.colors = ['red', 'green']
+    }
+    Parent.prototype.getName = function () {
+      console.log(this.name)
+    }
+    function Child(name, age) {
+      Parent.call(this, name)
+      this.age = age
+    }
+    Child.prototype = new Parent()
+    var child1 = new Child('wade', 13)
+    console.log(child1)
+  }
+
+  // 优化寄生组合继承
+  function seven() {
+    function object(o) {
+      function F() {}
+      F.prototype = o
+      return new F()
+    }
+    function prototype(child, parent) {
+      var prototype = object(parent.prototype)
+      prototype.constructor = child
+      child.prototype = prototype
+    }
+    // 使用的时候
+    // prototype(Child, Parent)
+  }
+
+</script>
+
+</html>

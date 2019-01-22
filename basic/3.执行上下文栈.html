@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+  <pre>
+    js引擎不是一行一行的分析和执行代码,而是一段一段的分析执行。
+    当执行一段代码的时候，会有一个‘执行上下文’,比如变量提升，函数提升。
+    js的可执行代码分为三种。全局，函数，eval(块级)
+  </pre>
+
+  <script>
+    function one() {
+      var foo = function () {
+        console.log(111)
+      }
+      foo() // 111
+      var foo = function () {
+        console.log(222)
+      }
+      foo() // 222
+    }
+
+    function two() {
+      function foo() {
+        console.log(111)
+      }
+      foo()
+
+      function foo() {
+        console.log(222)
+      }
+      foo()
+    }
+
+    // 模拟执行上下文栈ECStack = []
+    // ECStack最底部永远有个globaContext
+    // 当执行一个函数的时候，就会创建一个执行上下文，并且压入执行上下文栈
+    // 当函数执行完，就会将函数的执行上下文从栈中弹出
+
+    function three() {
+      // 为了封装函数忽略three函数的执行上下文
+      // fun1()
+      // ECStack.push(fun1Context)
+      // fun1中调用了fun2，还要创建fun2的执行上下文
+      // ECStack.push(fun2Context)
+      // fun2中调用了fun3，还要创建fun3的执行上下文
+      // ECStack.push(fun3Context)
+      // fun3执行完毕
+      // ECStack.pop()
+      // fun2执行完毕
+      // ECStack.pop()
+      // fun1执行完毕
+      // ESCtack.pop()
+      // 现在ECStack = [globalContext].接着执行下面的代码
+      function fun3() {
+        console.log('fun3')
+      }
+
+      function fun2() {
+        fun3()
+      }
+
+      function fun1() {
+        fun2()
+      }
+      fun1()
+    }
+
+    three()
+  </script>
+</body>
+
+</html>
