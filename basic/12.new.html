@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <pre>
+    <h3>new</h3>
+    new运算符创建一个用户定义的对象类型的实例或具有构造函数的内置对象类型之一
+
+    实例可以：
+      1：访问到构造函数里的属性
+      2：访问到构造函数原型对象的属性
+  </pre>
+</body>
+<script>
+  function one() {
+    function Person(name, age) {
+      this.name = name
+      this.age = age
+    }
+    Person.prototype.sex = '男'
+    Person.prototype.sayName = function () {
+      console.log(`我是${this.name}`)
+    }
+    const person = new Person('大宝', 16)
+    console.log(person)
+    console.log(person.name)
+    console.log(person.sex)
+    person.sayName()
+  }
+
+  function two() {
+    // 当构造函数返回对象时，在实例中只能访问对象中的属性
+    // function Person(name, age) {
+    //   this.sex = '???'
+    //   this.age = age
+    //   return {
+    //     name,
+    //     habit: '抠脚'
+    //   }
+    // }
+    // 当构造函数返回基本类型,相当于没有返回值进行处理
+    function Person(name, age) {
+      this.sex = '???'
+      this.age = age
+      this.name = name
+      return this.name
+    }
+    Person.prototype.height = '大于0'
+    Person.prototype.sayName = function () {
+      console.log(`我是${this.name}`)
+    }
+    var person = new Person('测试', 10)
+    console.log(person)
+    console.log(person.name)
+    console.log(person.habit)
+    console.log(person.age)
+    console.log(person.sex)
+    console.log(person.height)
+    person.sayName()
+  }
+
+  function objectFactory() {
+    var obj = {}
+    Constructor = [].shift.call(arguments)
+    obj.__proto__ = Constructor.prototype
+    Constructor.apply(obj, arguments)
+    return obj
+  }
+
+  function objectFactory() {
+    var obj  = {}
+    Constructor = [].shift.call(arguments)
+    obj.__proto__ = Constructor.prototype
+    var result = Constructor.apply(obj, arguments)
+    return typeof result === 'object' ? result : obj
+  }
+
+</script>
+</html>

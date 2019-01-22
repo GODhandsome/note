@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>作用域</h1>
+  <pre>
+    作用域是指程序源代码中定义变量的区域
+    作用域规定了如何查找变量，也就是确定当前执行代码对变量的访问权限。
+    JavaScript 采用词法作用域,也就是静态作用域
+  </pre>
+  <pre>
+    因为js采用词法作用域, 函数的作用域在函数定义的时候就确定了。
+    而与词法作用域相对的是动态作用域，函数的作用用于是在函数调用的时候才决定的。
+  </pre>
+  <pre>
+
+  </pre>
+  <script>
+    var value = 1
+
+    function one() {
+      console.log(value)
+    }
+
+    function two() {
+      var value = 2
+      one()
+    }
+
+    // 因为js是词法（静态）作用域，所以在定义的时候会在函数作用于内找value,因为没有去外部找到全局value；
+    // 虽然在two函数中存在局部变量value,但是one的作用域在定义的时候就确定了
+    two() // 1
+
+
+    var scope = "global scope"
+
+    function checkscope() {
+      var scope = "local scope"
+
+      function f() {
+        return scope
+      }
+      return f();
+    }
+
+    function checkscope2() {
+      var scope = "local scope"
+
+      function f() {
+        return scope
+      }
+      return f
+    }
+
+    //  js函数执行用到了作用域链,这个作用域链是在函数定义的时候创建的，内部函数f()定义在这个作用域链里面
+    // 那变量scope一定是局部变量,不管什么时候执行f()，他的绑定关系都不会改变
+    console.log(checkscope()) // local scope
+    console.log(checkscope2()()) // local scope
+  </script>
+</body>
+
+</html>

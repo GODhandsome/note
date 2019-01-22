@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <pre>
+    <h3>call</h3>
+    call()是使用一个指定的this值和若干个指定的参数的前提下调用某个函数或方法
+
+    模拟：
+      1.将函数设为对象的属性（对象为空时设为window）
+      2.使用arguments获取传递的参数
+      3.使用eval解析字符串执行其中的js代码
+      4.删除第一步设置的属性
+      5.返回结果
+  </pre>
+</body>
+<script>
+  Function.prototype.call2 = function (context) {
+    var context = context || window
+    context.fn = this
+    var arg = []
+    for (var i = 1; i < arguments.length; i++) {
+      arg.push(`arguments[${i}]`)
+    }
+    var result = eval('context.fn(' + arg + ')')
+    delete context.fn
+    return result
+  }
+
+
+  Function.prototype.apply2 = function (context, arr) {
+    var context = context || window
+    context.fn = this
+    var arg = []
+    var result
+    if (!arr) {
+      result = context.fn()
+    } else {
+      for (var i = 1; i < arguments.length; i++) {
+        arg.push(`arguments[${i}]`)
+      }
+      result = eval('context.fn([' + arg + '])')
+    }
+    delete context.fn
+    return result
+  }
+
+  var person = {
+    sex: '男'
+  }
+
+  function a(name, age) {
+    console.log(name)
+    console.log(age)
+    console.log(this.sex)
+    return `我是叫做${name}的${age}岁${this.sex}人`
+  }
+
+  console.log(a.call2(person, 'aa', 13))
+</script>
+</html>
