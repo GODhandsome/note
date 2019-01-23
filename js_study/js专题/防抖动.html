@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <pre id="pre">
+    前端开发中常遇到一些频繁触发的事件，比如：
+      1. window的resize, scroll
+      2. mousedown, mousemove
+      3. keyup, keydown
+      。。。
+  </pre>
+
+  <pre>
+    <h2>防抖动</h2>
+    防抖动的原理就是：在事件触发后n秒后才执行，如果在这n秒内又触发了事件，
+      就重新计时n秒。就是在触发事件后的n秒内不再触发该事件函数才执行。
+  </pre>
+</body>
+<script>
+  var pre = document.getElementById('pre')
+
+  function handleClick() {
+    console.log(this)
+  }
+
+  var handleClick2 = one(handleClick, 300)
+
+  pre.onclick = handleClick2
+
+  function one(func, wait) {
+    var timeout
+    return function () {
+      clearTimeout(timeout)
+      timeout = setTimeout(func, wait);
+    }
+  }
+
+  function two(func, wait) {
+    // 需要正确的this指向
+    var timeout
+    return function () {
+      var context = this
+      clearTimeout(timeout)
+      timeout = setTimeout(() => {
+        func.apply(context)
+      }, wait);
+    }
+  }
+
+
+  function three(func, wait) {
+    // 事件句柄的时候需要event对象
+    var timeout
+    return function () {
+      var context = this
+      var arg = arguments
+      clearTimeout(timeout)
+      timeout = setTimeout(() => {
+        func.apply(context, arg)
+      }, wait);
+    }
+  }
+
+
+  function four(func, wait, immediate) {
+    // 立即执行，在停止触发n苗后，才能再次触发执行
+    var timeout
+    return function () {
+      var context = this
+      var arg = arguments
+      if (timeout) clearTimeout(timeout)
+      if (immediate) {
+        // 如果需要立即执行
+        var callNow = !timeout
+        timeout = setTimeout(() => {
+          timeout = null
+        }, wait);
+        if (callNow) func.apply(context, arg)
+      } else {
+        timeout = setTimeout(() => {
+          func.apply(context, arg)
+        }, wait);
+      }
+    }
+  }
+
+
+  function five(func, wait, immediate) {
+    var timeout, result
+    return function () {
+      var context = this
+      var arg = arguments
+      if (timeout) clearTimeout(timeout)
+      if (immediate) {
+        var callNow = !timeout
+        timeout = setTimeout(() => {
+          timeout = null
+        }, wait);
+        if (callNow) result = func.apply(context, arg)
+      } else {
+        timeout = setTimeout(() => {
+          func.apply(context, arg)
+        }, wait);
+      }
+      return result
+    }
+  }
+
+  function six(func, wait, immediate) {
+    var timeout, result
+    function debounce() {
+      var context = this
+      var arg = arguments
+      if (timeout) clearTimeout(timeout)
+      if (immediate) {
+        var callNow = !timeout
+        timeout = setTimeout(() => {
+          timeout = null
+        }, wait);
+        if (callNow) result = func.apply(context, arg)
+      } else {
+        timeout = setTimeout(() => {
+          func.apply(context, arg)
+        }, wait);
+      }
+      return result
+    }
+    debounce.cancle = function () {
+      clearTimeout(timeout)
+      timeout = null
+    }
+    return debounce
+  }
+</script>
+</html>

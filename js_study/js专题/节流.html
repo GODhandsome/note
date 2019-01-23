@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <pre>
+    <h2>节流</h2>
+    如果你持续触发事件，每隔一段时间，只执行一次事件
+    根据首次是否执行以及结束后是否执行，效果有所不同，实现方式也有所不同
+
+    关于节流的实现，两种主流的方式，一种是时间戳，一种是定时器
+  </pre>
+
+  <pre>
+    <h3>使用时间戳</h3>
+    当触发事件时，我们取出当前的时间戳，然后减去之前的时间戳（初始为0），
+    如果大于设置的时间周期，就执行函数，然后更新时间戳为当前的时间戳，
+    如果下雨，就不执行
+  </pre>
+
+  <pre>
+    <h3>使用定时器</h3>
+    当触发事件时，我们设置一个定时器，在触发事件时。如果定时器存在，就不执行，
+    直到定时器执行，并清空定时器，之后才能设置下一个定时器
+  </pre>
+</body>
+<script>
+  // 有头无尾
+  // 事件第一次触发会立即执行一次，停止触发后无法执行
+  function timeStamp(func, wait) {
+    var context, arg
+    var previous = 0
+    return function () {
+      var now = +new Date()
+      context = this
+      arg = arguments
+      if (now - previous > wait) {
+        func.apply(context, arg)
+        previous = now
+      }
+    }
+  }
+
+// 无头有尾
+// 事件会在n秒后第一次执行，停止触发后依然会再执行一次
+  function timeOut(func, wait) {
+    var context, arg, timeout
+    return function () {
+      context = this
+      arg = arguments
+      if (!timeout) {
+        timeout = setTimeout(() => {
+          timeout = null
+          func.apply(context, arg)
+        }, wait);
+      }
+    }
+  }
+
+// 有头有尾
+// 事件第一次触发立即执行。停止触发后依然会在执行一次
+  function three(func, wait) {
+    var context, arg, timeout
+    var previous = 0
+
+    function later() {
+      previous = +new Date()
+      timeout = null
+      func.apply(context, arg)
+    }
+
+    function throttled() {
+      var now = +new Date()
+      var remaining = wait - ( now - previous )
+      context = this
+      arg = arguments
+      if (remaining < 0 || remaining > wait) {
+        if (timeout) {
+          clearTimeout(timeout)
+          timeout = null
+        }
+        previous = now
+        func.apply(context, arg)
+      } else if (!timeout) {
+        timeout = setTimeout(later, wait);
+      }
+    }
+    return throttled
+  }
+
+//  leading: false 表示禁止第一次执行
+//  trailing: false 表示禁止停用触发的回调
+  function four(func, wait, option = {}) {
+    var timeout, context, arg
+    var previous = 0
+
+    function later() {
+      previous = option.leading === false ? 0 : new Date().getTime()
+      timeout = null
+      func.apply(context, arg)
+      if (!timeout) context = arg = null
+    }
+
+    return function throttled() {
+      var now = new Date().getTime()
+      if (!previous && option.leading === false) previous = now
+      var remaining = wait - ( now - previous )
+      context = this
+      arg = arguments
+      if (remaining < 0 || remaining > wait) {
+        if (timeout) {
+          clearTimeout(timeout)
+          timeout = null
+        }
+        previous = now
+        func.apply(context, arg)
+        if (!timeout) context = args = null
+      } else if (!timeout && options.trailing !== false) {
+        timeout = setTimeout(later, wait);
+      }
+    }
+  }
+</script>
+</html>
