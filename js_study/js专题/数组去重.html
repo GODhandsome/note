@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+  <div>[1, 1, '1', '1', null, null, undefined, undefined, new String('1'), new String('1'), /a/, /a/, NaN, NaN]</div>
+  <table border="8">
+    <tr>
+      <td>方法</td>
+      <td>结果</td>
+      <td>说吗</td>
+    </tr>
+    <tr>
+      <td>for循环</td>
+      <td>[1, "1", null, undefined, String, String, /a/, /a/, NaN, NaN]</td>
+      <td>对象和 NaN 不去重</td>
+    </tr>
+    <tr>
+      <td>indexOf</td>
+      <td>[1, '1', null, undefined, String, String, /a/, /a/, NaN, NaN]</td>
+      <td>对象和 NaN 不去重</td>
+    </tr>
+    <tr>
+      <td>sort</td>
+      <td>[/a/, /a/, "1", 1, String, 1, String, NaN, NaN, null, undefined]</td>
+      <td>对象和 NaN 不去重 数字 1 也不去重</td>
+    </tr>
+    <tr>
+      <td>filter + indexOf</td>
+      <td>[1, "1", null, undefined, String, String, /a/, /a/]</td>
+      <td>对象不去重 NaN 会被忽略掉</td>
+    </tr>
+    <tr>
+      <td>filter + sort</td>
+      <td>[/a/, /a/, "1", 1, String, 1, String, NaN, NaN, null, undefined]</td>
+      <td>对象和 NaN 不去重 数字 1 不去重</td>
+    </tr>
+    <tr>
+      <td>优化后的键值对方法</td>
+      <td>[1, "1", null, undefined, String, /a/, NaN]</td>
+      <td>全部去重</td>
+    </tr>
+    <tr>
+      <td>Set</td>
+      <td>[1, "1", null, undefined, String, String, /a/, /a/, NaN]</td>
+      <td>对象不去重 NaN 去重</td>
+    </tr>
+  </table>
+</body>
+<script>
+  // 双层循环
+  // 兼容性好
+  function one() {
+    var arr = [1, 1, '1', '1']
+
+    function unique(array) {
+      var res = []
+      for (let i = 0, arrlen = array.length; i < arrlen; i++) {
+        for (let j = 0, reslen = res.length; j < reslen; j++) {
+          if (array[i] === res[j]) {
+            break
+          }
+          if (j === reslen) {
+            res.push(array[i])
+          }
+        }
+      }
+      return res
+    }
+    console.log(unique(arr))
+  }
+
+  // indexOf
+  function two() {
+    var arr = [1, 1, '1']
+
+    function unique(array) {
+      var res = []
+      for (let i = 0; i < array.length; i++) {
+        var current = array[i]
+        if (res.indexOf(current) === -1) {
+          res.push(current)
+        }
+      }
+      return res
+    }
+  }
+
+  // 排序后去重
+  // 排序后相同的值就会排在一起，只需要判断当前与上一个是否相同
+  function three() {
+    var arr = [1, 1, '1']
+
+    function unique(array) {
+      var res = []
+      // 使用concat复制一个数组，sort方法在某些特殊的场合不适用
+      var sortArr = array.concat().sort()
+      var seen
+      for (let i = 0; i < array.length; i++) {
+        if (!i || seen !== sortArr[i]) {
+          res.push(sortArr)
+        }
+        seen = sortArr[i]
+      }
+      return res
+    }
+  }
+
+  // unique工具函数
+  function four() {
+    var array1 = [1, 2, '1', 2, 1]
+    var array2 = [1, 1, '1', 2, 2]
+
+    function unique(array, isSorted) {
+      var res = []
+      var seen
+      for (let i = 0; i < array.length; i++) {
+        var value = array[i]
+        if (isSorted) {
+          if (!i || seen !== value) {
+            res.push(value)
+          }
+          seen = value
+        } else if (res.indexOf(value) === -1) {
+          res.push(value)
+        }
+      }
+      return res
+    }
+  }
+
+  // 优化工具函数
+  function five() {
+    var array1 = [1, 1, 'a', 'A', 2, 2]
+
+    function unique(array, isSorted, iteratee) {
+      var res = []
+      var seen = []
+
+      for (let i = 0; i < array.length; i++) {
+        const value = array[i];
+        var computed = iteratee ? iteratee(value, i, array) : value
+        if (isSorted) {
+          if (!i || seen !== computed) {
+            res.push(value)
+          }
+          seen = computed
+        } else if (iteratee) {
+          if (seen.indexOf(computed) === -1) {
+            seen.push(computed)
+            res.push(value)
+          }
+        } else if (res.indexOf(value) === -1) {
+          res.push(value)
+        }
+      }
+      return res
+    }
+
+    console.log(unique(array1, false, (item) => {
+      return typeof item === 'string' ? item.toLowerCase() : item
+    }))
+
+  }
+
+  // filter
+  function six() {
+    var array1 = [1, 2, 1, 1, '1']
+
+    function uniqeu(array) {
+      var res = array.filter((item, index, array) => {
+        return array.indexOf(item) === index
+      })
+      return res
+    }
+  }
+
+  // filter排序去重
+  function seven() {
+    var array1 = [1, 2, 1, 1, '1']
+
+    function unique(array) {
+      return array.concat().sort().filter((item, index, array) => {
+        return !index || item !== array[index - 1]
+      })
+    }
+  }
+
+  // Obkect 键值对
+  function eight() {
+    var array1 = [1, 2, 1, 1, '1']
+
+    function unique(array) {
+      var obj = {}
+      return array.filter((item, index, array) => {
+        return obj.hasOwnProperty(item) ? false : (obj[item] = true)
+      })
+    }
+  }
+
+  // 键值对会认为 1 '1'是相同的会有问题
+  function nine() {
+    var array1 = [1, 2, 1, 1, '1']
+
+    function unique(array) {
+      var obj = {}
+      return array.filter((item, index, array) => {
+        return obj.hasOwnProperty(typeof item + item) ? false : (obj[typeof item + item] = true)
+      })
+    }
+  }
+
+  // 当对象的值是对象时也会出现问题，typeof item + item 都是object[object Object]
+  function ten() {
+    var array1 = [1, 2, 1, 1, '1']
+
+    function unique(array) {
+      var obj = {}
+      return array.filter((item, index, array) => {
+        return obj.hasOwnProperty(typeof item + JSON.stringify(item)) ?
+          false :
+          obj[(typeof item + JSON.stringify(item)) = true]
+      })
+    }
+  }
+
+  // es6
+  function eleven() {
+    var array1 = [1, 2, 1, 1, '1']
+    // 3种
+    function unique(array) {
+      return Array.from(new Set(array))
+    }
+
+    var unique = (a) => [...new Set(a)]
+
+    function unique(arr) {
+      const seen = new Map()
+      return arr.filter((a) => !seen.has(a) && seen.set(a, 1))
+    }
+  }
+</script>
+
+</html>
