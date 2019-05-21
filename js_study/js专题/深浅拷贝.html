@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    // 数组浅拷贝可以使用slice, concat返回新数组的特性
+    function one() {
+      var arr = [1, 2, 3, 4];
+      // var newArr = arr.concat();
+      var newArr = arr.slice();
+      newArr[0] = 11;
+      console.log(arr);
+      console.log(newArr);
+      // 但是如果数组嵌套了对象或者数组,新旧数组内的数组或对象发生改变都会相互影响
+      // 所以如果数据是基本类型就拷贝一份，但对于引用类型是拷贝的引用
+      var arr1 = [{a: 1, b: 2}, [1]];
+      var newArr1 = arr1.concat();
+      newArr1[0]['a'] = 11;
+      console.log(arr1);
+      console.log(newArr1);
+    }
+
+    // 使用JSON.parse， JSON.stringify简单粗暴的深拷贝，问题就是无法拷贝函数
+    function two() {
+      var arr = [
+        {a:1},
+        [1,2],
+        function func() {
+          console.log(111);
+        }
+      ];
+      var newArr = JSON.parse(JSON.stringify(arr));
+      newArr[0]['a'] = 11;
+      console.log(arr);
+      console.log(newArr);
+    }
+
+    // 浅拷贝实现，遍历对象，然后把属性和属性值放在一个新的对象（数组是特殊对象）
+    function shallowCopy(obj) {
+      if (typeof obj !== 'object') return;
+      // instanceof运算符用于测试构造函数的prototype属性是否出现在对象的原型链中的任何位置
+      var newObj = obj instanceof Array ? [] : {};
+      for (const key in obj) {
+        newObj[key] = obj[key];
+      }
+      return newObj;
+    }
+
+    // 深拷贝实现,遍历对象，如果属性值是对象就递归调用深拷贝函数
+    // 深拷贝使用递归会影响性能，具体使用看场景
+    function deepCopy(obj) {
+      if (typeof obj !== 'object') return;
+        var newObj = obj instanceof Array ? [] : {};
+        for (const key in obj) {
+          if (obj.hasOwnProperty(key)) {
+            newObj[key] = typeof obj[key] === 'object' ? deepCopy(obj[key]) : obj[key];
+          }
+        }
+        return newObj;
+    }
+
+  </script>
+</body>
+</html>
