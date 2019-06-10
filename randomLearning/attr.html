@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <audio id="audio" for="aaa" data-aa-cc="asd" src="" tt="asddd"></audio>
+</body>
+<script>
+  const dom = document.getElementById('audio')
+  const attr = dom.attributes // 一个类数组对象 {0：id, id: id}   attr[0] === attr['id']
+  // 6中操作方法， 适用所有属性（包括自定义属性）,对大小写不敏感, 不用改写保留字
+  // getAttribute() 只返回字符串，不会返回其他类型的值
+  // getAttributeNames() 返回一个数组，成员是当前元素的所有属性的名字。如果当前元素没有任何属性，则返回一个空数组。
+  // setAttribute()
+  // hasAttribute()
+  // hasAttributes() 当前dom是否有属性
+  // removeAttribute()
+  console.log(attr)
+  console.log(dom.getAttribute('ID'))
+  console.log(dom.getAttributeNames())
+  console.log(dom.hasAttribute('zz'))
+  dom.setAttribute('zz', 'xx')
+  console.log(dom.hasAttribute('zz'))
+  dom.removeAttribute('zz')
+  console.log(dom.hasAttribute('zz'))
+  console.log(dom.hasAttributes())
+  console.log(dom.dataset)
+  console.log(dom.getAttribute('data-aa-cc'))
+</script>
+</html>
