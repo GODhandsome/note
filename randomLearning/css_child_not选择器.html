@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    /* 优先级为括号内的优先级 */
+    #list li:not(:last-child) {
+      background: red;
+    }
+
+    #list li:not(.one) {
+      font-size: 20px;
+    }
+
+    /* :nth-child(an+b) 这个 CSS 伪类首先找到所有当前元素的兄弟元素，
+    然后按照位置先后顺序从1开始排序，选择的结果为第（an+b）个元素的集合（n=0，1，2，3...） */
+    #list2 li:nth-child(odd) {
+      color: white;
+    }
+
+    #list2 li:nth-child(2n - 1) {
+      background: #000;
+    }
+
+    #list2 li:nth-child(3n) {
+      font-size: 30px;
+    }
+
+    #list2 li:nth-child(even) {
+      color: red;
+    }
+
+    #list3 li + li {
+      background: yellow;
+    }
+
+    #list3 li:first-child ~ li {
+      color: red;
+    }
+
+    #list3 li:not(:last-child)::after{
+      content: ";";
+    }
+
+  </style>
+</head>
+<body>
+  <ul id="list">
+    <li class="one">123</li>
+    <li>123</li>
+    <li>123</li>
+  </ul>
+
+  <ol id="list2">
+    <li>123</li>
+    <li>123</li>
+    <li>123</li>
+    <li>123</li>
+    <li>123</li>
+    <li>123</li>
+  </ol>
+
+  <ul id="list3">
+    <li>123</li>
+    <li>123</li>
+    <li>123</li>
+    <li>123</li>
+  </ul>
+</body>
+</html>
