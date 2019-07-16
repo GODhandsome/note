@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <pre>
+    if (condition) {
+      var value = 1;
+    }
+    console.log(value);
+    等同于
+    var value;
+    if (condition) {
+      value = 1;
+    }
+    console.log(value);
+  </pre>
+  <pre>
+    为了加强对变量生命周期的控制.es6引入了块级作用域。
+    块级作用域存在于函数内部以及 {}之中
+  </pre>
+
+  <pre>
+    let const特点
+    1. 不会被提升（另外一种提升,跟var不一样。）
+    2. 重复声明报错
+    3. 不绑定全局作用域
+
+    const 用于声明常量，不允许修改引用，但可以修改值（可以修改引用对象内的值）,const必须在声明的时候赋值
+  </pre>
+
+  <pre>
+    <h3>临时死区</h3>
+    临时死区(Temporal Dead Zone)，简写为 TDZ。
+     JavaScript 引擎在扫描代码发现变量声明时，要么将它们提升到作用域顶部(遇到 var 声明)，
+     要么将声明放在 TDZ 中(遇到 let 和 const 声明)。访问 TDZ
+     中的变量会触发运行时错误。只有执行过变量声明语句后，变量才会从 TDZ 中移出，然后方可访问。
+  </pre>
+
+  <pre>
+    var funcs = [];
+    for (let i = 0; i < 3; i++) {
+        funcs[i] = function () {
+            console.log(i);
+        };
+    }
+    funcs[0](); // 0
+    相当于
+    for (let i = 0; i < 3; i++) {
+      let i = 'abc';
+      console.log(i);
+    }
+     let 声明在循环内部的行为是标准中专门定义的，不一定就与 let 的不提升特性有关，
+     其实，在早期的 let 实现中就不包含这一行为。
+
+     for in 循环中，每次迭代不会修改已有的绑定，而是会创建一个新的绑定。
+  </pre>
+</body>
+<script>
+  function one() {
+    let a;
+    const b = 2;
+    console.log(a);
+    console.log(b);
+  }
+  one()
+</script>
+</html>
