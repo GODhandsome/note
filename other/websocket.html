@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h2>websocket诞生背景</h2>
+    <p>
+      早期，很多网站为了实现推送技术，所用的技术都是轮询。轮询是指由浏览器每隔一段时间向服务器发出
+      HTTP
+      请求，然后服务器返回最新的数据给客户端。常见的轮询方式分为轮询与长轮询。
+    </p>
+    <p>
+      这种传统的模式带来很明显的缺点，即浏览器需要不断的向服务器发出请求，然而
+      HTTP
+      请求与响应可能会包含较长的头部，其中真正有效的数据可能只是很小的一部分，所以这样会消耗很多带宽资源。
+      比较新的轮询技术是
+      Comet。这种技术虽然可以实现双向通信，但仍然需要反复发出请求。而且在 Comet
+      中普遍采用的 HTTP 长连接也会消耗服务器资源。 在这种情况下，HTML5 定义了
+      WebSocket
+      协议，能更好的节省服务器资源和带宽，并且能够更实时地进行通讯。Websocket
+      使用 ws 或 wss 的统一资源标志符（URI），其中 wss 表示使用了 TLS 的
+      Websocket。
+    </p>
+
+    <h2>实现Comet(服务器推送)的两种方式：长轮询和http流</h2>
+    <p>
+      长轮询是短轮询的翻版，短轮询的方式是：页面定时向服务器发送请求，看有没有更新的数据。<br>
+      而长轮询的方式是，页面向服务器发起一个请求，服务器一直保持tcp连接打开，知道有数据可发送。发送完数据后，页面关闭该连接，随即又发起一个新的服务器请求，在这一过程中循环。<br>
+      短轮询和长轮询的区别是：短轮询中服务器对请求立即响应，而长轮询中服务器等待新的数据到来才响应，因此实现了服务器向页面推送实时，并减少了页面的请求次数。<br>
+      http流不同于上述两种轮询，因为它在页面整个生命周期内只使用一个HTTP连接，具体使用方法即页面向浏览器发送一个请求，而服务器保持tcp连接打开，然后不断向浏览器发送数据。
+    </p>
+    <pre>
+      长轮询
+      var xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = function(){
+        if(xhr.readyState == 4){
+          result = xhr.responseText
+          console.log(result);
+          xhr.open('get', 'test2.php');	//在获得数据后重新向服务器发起请求
+          xhr.send(null);
+        }
+      }
+      xhr.open('get', 'test2.php');
+      xhr.send(null);
+    </pre>
+
+    <pre>
+      http流
+      var xhr = new XMLHttpRequest();
+      received = 0;	//最新消息在响应消息的位置
+      xhr.onreadystatechange = function(){
+        if(xhr.readyState == 3){
+          result = xhr.responseText.substring(received);
+          console.log(result);
+          received += result.length;
+        }else if(xhr.readyState == 4){
+          console.log("完成消息推送");
+        }
+      }
+      xhr.open('get', 'test1.php');
+      xhr.send(null);
+    </pre>
+    <h2>WebSocket</h2>
+    <p>
+      WebSocket 使得客户端和服务器之间的数据交换变得更加简单，允许服务端主动向客户端推送数据。在 WebSocket API 中，浏览器和服务器只需要完成一次握手，两者之间就可以创建持久性的连接，并进行双向数据传输。
+    </p>
+    <h2>WebSocket与SSE</h2>
+    <p>
+      SSE 与 WebSocket 作用相似，都是建立浏览器与服务器之间的通信渠道，然后服务器向浏览器推送信息。WebSocket 更强大和灵活。因为它是全双工通道，可以双向通信；SSE 是单向通道，只能服务器向浏览器发送，因为流信息本质上就是下载。如果浏览器向服务器发送信息，就变成了另一次 HTTP 请求。
+      <h3>优缺点区别</h3>
+      <pre>
+        SSE 使用 HTTP 协议，现有的服务器软件都支持。WebSocket 是一个独立协议。
+        SSE 属于轻量级，使用简单；WebSocket 协议相对复杂。
+        SSE 默认支持断线重连，WebSocket 需要自己实现。
+        SSE 一般只用来传送文本，二进制数据需要编码后传送，WebSocket 默认支持传送二进制数据。
+        SSE 支持自定义发送的消息类型。
+        因此，两者各有特点，适合不同的场合。
+      </pre>
+      <pre>
+        较少的控制开销。在连接创建后，服务器和客户端之间交换数据时，用于协议控制的数据包头部相对较小。
+        更强的实时性。由于协议是全双工的，所以服务器可以随时主动给客户端下发数据。相对于 HTTP 请求需要等待客户端发起请求服务端才能响应，延迟明显更少。
+        保持连接状态。与 HTTP 不同的是，WebSocket 需要先创建连接，这就使得其成为一种有状态的协议，之后通信时可以省略部分状态信息。
+        更好的二进制支持。WebSocket 定义了二进制帧，相对 HTTP，可以更轻松地处理二进制内容。
+        可以支持扩展。WebSocket 定义了扩展，用户可以扩展协议、实现部分自定义的子协议
+      </pre>
+      另外大多数浏览器实现了SSE(Server-Sent Events,服务器发送事件)
+      API，SSE支持短轮询、长轮询和HTTP流，使用方式如下：
+    </p>
+    <pre>
+      var source = new EventSource("test.php");	//生成EventSource对象，url必须同源
+      var len = 0;
+      source.onopen = function(){		//如果连接断开，还会自动重新连接
+        console.log("connection opend");
+      }
+      source.onmessage = function(event){	//event.data返回最新的消息
+        var data = event.data.substring(0);
+        len = data.length;
+        console.log(data);
+      }
+    </pre>
+  </body>
+</html>
