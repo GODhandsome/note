@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <pre>
+      如果你碰巧要在字符串中使用反撇号，你可以使用反斜杠转义
+      let message = `Hello \` World`;
+    </pre>
+    <pre>
+      在模板字符串中，空格、缩进、换行都会被保留：
+      <code>
+        let message = `
+        <ul>
+          <li>1</li>
+          <li>2</li>
+        </ul>
+      `;
+      console.log(message);
+      </code>
+    </pre>
+  </body>
+  <script>
+    function one() {
+      //基础用法
+      let message = `Hello World`;
+      console.log(message);
+    }
+    three();
+    function two() {
+      //如果你碰巧要在字符串中使用反撇号，你可以使用反斜杠转义
+      let message = `Hello \` world`;
+      console.log(message);
+    }
+
+    function three(params) {
+      //在模板字符串中，空格、缩进、换行都会被保留
+      //注意，打印的结果中第一行是一个换行，你可以使用 trim 函数消除换行
+      let message = `
+      <ul>
+        <li>1</li>
+        <li>2</li>
+      </ul>
+    `;
+      console.log(message);
+    }
+  </script>
+</html>
